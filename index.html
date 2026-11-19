@@ -109,7 +109,7 @@
                         <div id="section-select-double-med" class="hidden">
                             <label for="select-double-med-cat" class="block text-sm font-medium text-slate-700 mb-1.5">Pilih Kategori Double Med</label>
                             <select id="select-double-med-cat" onchange="handleDoubleMedCatChange()" class="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-3 transition-colors">
-                                <option value="custom">Input Diskon Manual</option>
+                                <option value="custom">Input Manual</option>
                                 <option value="13.5" selected>DOUBLE MED - TRAUMA (Disc 13.50%)</option>
                                 <option value="33.5">DOUBLE MED - SPINE (Disc 33.50%)</option>
                             </select>
@@ -117,7 +117,7 @@
 
                         <!-- Input HNA (Harga Netto Apotek) -->
                         <div>
-                            <label for="input-hna" class="block text-sm font-medium text-slate-700 mb-1.5">Harga Netto (HNA)</label>
+                            <label for="input-hna" class="block text-sm font-medium text-slate-700 mb-1.5">HNA</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                                     <span class="text-slate-500 font-semibold sm:text-sm">Rp</span>
@@ -301,7 +301,7 @@
         // Render dropdown pilihan vendor untuk mode All Vendor
         function renderVendorDropdown() {
             const select = document.getElementById('select-vendor');
-            select.innerHTML = '<option value="manual">-- Input Diskon Manual --</option>';
+            select.innerHTML = '<option value="manual">-- Input Manual --</option>';
             
             vendors.forEach(v => {
                 const mfgText = v.mfg && v.mfg !== '-' ? ` - ${v.mfg}` : '';
