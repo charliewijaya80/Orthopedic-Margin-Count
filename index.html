@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kalkulator Margin Vendor & Double Med</title>
+    <!-- Konfigurasi Web App untuk iPhone (iOS) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Kalkulator Margin">
+    <link rel="apple-touch-icon" href="https://placehold.co/180x180/2563eb/ffffff?text=KM">
+    <!-- Memuat Tailwind CSS untuk styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Memuat Font Inter dari Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Memuat Lucide Icons untuk ikon modern -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Kustomisasi scrollbar agar lebih rapi */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header Aplikasi -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 text-white p-2 rounded-xl shadow-sm">
+                    <i data-lucide="calculator" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 leading-tight">Kalkulator Margin</h1>
+                    <p class="text-xs text-slate-500">Perhitungan Harga Jual All Vendor & Double Med</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="resetForm()" class="text-sm text-slate-600 hover:text-blue-600 flex items-center gap-1.5 bg-slate-100 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors font-medium">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Reset</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Konten Utama -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        
+        <!-- Tab Navigasi Mode Kalkulator -->
+        <div class="bg-slate-200/70 p-1.5 rounded-2xl flex max-w-md mx-auto mb-8 shadow-inner">
+            <button id="tab-all-vendor" onclick="switchMode('all_vendor')" class="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-200 bg-white text-blue-600 shadow-sm flex items-center justify-center gap-2">
+                <i data-lucide="building-2" class="w-4 h-4"></i>
+                All Vendor
+            </button>
+            <button id="tab-double-med" onclick="switchMode('double_med')" class="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900 flex items-center justify-center gap-2">
+                <i data-lucide="shield-plus" class="w-4 h-4"></i>
+                Double Med
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+            
+            <!-- Kolom Kiri: Form Input & Pilihan Vendor -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- Kartu Input Utama -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-5">
+                        <h2 id="form-title" class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <span class="w-2 h-6 bg-blue-600 rounded-full"></span>
+                            Perhitungan All Vendor
+                        </h2>
+                    </div>
+
+                    <div class="space-y-5">
+                        <!-- Pilihan Vendor / Kategori -->
+                        <div id="section-select-all-vendor">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label for="select-vendor" class="block text-sm font-medium text-slate-700">Pilih Acuan Vendor (Opsional)</label>
+                                <button type="button" onclick="openModalVendor()" class="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-lg transition-colors">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                    Kelola / Tambah Vendor
+                                </button>
+                            </div>
+                            <select id="select-vendor" onchange="handleVendorChange()" class="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-3 transition-colors">
+                                <!-- Opsi akan diisi oleh JavaScript -->
+                            </select>
+                            <p class="text-xs text-slate-500 mt-1.5">Memilih vendor akan otomatis mengisi persentase diskon, namun Anda tetap bisa mengubahnya secara manual.</p>
+                        </div>
+
+                        <!-- Pilihan Kategori Khusus Double Med -->
+                        <div id="section-select-double-med" class="hidden">
+                            <label for="select-double-med-cat" class="block text-sm font-medium text-slate-700 mb-1.5">Pilih Kategori Double Med</label>
+                            <select id="select-double-med-cat" onchange="handleDoubleMedCatChange()" class="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-3 transition-colors">
+                                <option value="custom">Input Diskon Manual</option>
+                                <option value="13.5" selected>DOUBLE MED - TRAUMA (Disc 13.50%)</option>
+                                <option value="33.5">DOUBLE MED - SPINE (Disc 33.50%)</option>
+                            </select>
+                        </div>
+
+                        <!-- Input HNA (Harga Netto Apotek) -->
+                        <div>
+                            <label for="input-hna" class="block text-sm font-medium text-slate-700 mb-1.5">Harga Netto (HNA)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <span class="text-slate-500 font-semibold sm:text-sm">Rp</span>
+                                </div>
+                                <input type="text" id="input-hna" inputmode="numeric" placeholder="0" oninput="formatAndCalculateHNA(this)" class="w-full pl-11 pr-4 py-3 bg-white border border-slate-300 rounded-xl text-slate-900 font-semibold text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm">
+                            </div>
+                        </div>
+
+                        <!-- Input Diskon (%) -->
+                        <div>
+                            <label for="input-disc" class="block text-sm font-medium text-slate-700 mb-1.5">Diskon (%)</label>
+                            <div class="relative">
+                                <input type="number" id="input-disc" step="0.01" min="0" max="100" placeholder="0" oninput="calculate()" class="w-full pl-4 pr-10 py-3 bg-white border border-slate-300 rounded-xl text-slate-900 font-semibold text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm">
+                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                    <span class="text-slate-500 font-semibold sm:text-sm">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Kolom Kanan: Rincian & Hasil Akhir -->
+            <div class="lg:col-span-5">
+                <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden sticky top-24">
+                    <!-- Header Hasil -->
+                    <div id="result-header" class="bg-gradient-to-r from-blue-600 to-blue-700 p-5 sm:p-6 text-white">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-blue-100 text-xs font-medium uppercase tracking-wider mb-1">Harga Jual Akhir</p>
+                                <h3 id="final-price" class="text-2xl sm:text-3xl font-extrabold tracking-tight">Rp 0</h3>
+                                <span class="inline-block mt-1.5 text-[11px] font-medium bg-white/15 text-blue-50 px-2 py-0.5 rounded-md">Include PPN</span>
+                            </div>
+                            <button onclick="copyResult()" title="Salin Hasil" class="bg-white/15 hover:bg-white/25 text-white p-2 rounded-xl transition-colors backdrop-blur-sm">
+                                <i data-lucide="copy" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <p id="selected-vendor-label" class="text-xs text-blue-100 mt-3 pt-3 border-t border-white/15 flex items-center gap-1.5">
+                            <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+                            <span>Vendor: Manual</span>
+                        </p>
+                    </div>
+
+                    <!-- Rincian Langkah Perhitungan -->
+                    <div class="p-5 sm:p-6 space-y-3.5 text-sm">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Rincian Kalkulasi</h4>
+                        
+                        <div class="flex justify-between items-center py-1">
+                            <span class="text-slate-600">HNA</span>
+                            <span id="res-hna" class="font-medium text-slate-900">Rp 0</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-1">
+                            <span class="text-slate-600">HNA PPN</span>
+                            <span id="res-hna-ppn" class="font-medium text-slate-900">Rp 0</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-1 text-red-600">
+                            <span id="res-disc-label">Disc (0%)</span>
+                            <span id="res-disc-amount" class="font-medium">- Rp 0</span>
+                        </div>
+
+                        <div class="border-t border-dashed border-slate-200 my-1"></div>
+
+                        <div class="flex justify-between items-center py-1.5 bg-slate-50 px-3 rounded-lg">
+                            <span class="text-slate-700 font-medium">Harga Jual + Margin</span>
+                            <span id="res-jual-margin" class="font-semibold text-slate-900">Rp 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal Kelola / Tambah Vendor (All Vendor) -->
+    <div id="modal-vendor" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+            <!-- Header Modal -->
+            <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <i data-lucide="list-plus" class="w-5 h-5 text-blue-600"></i>
+                    Daftar Acuan Vendor
+                </h3>
+                <button onclick="closeModalVendor()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Form Tambah Vendor Baru -->
+            <div class="p-6 border-b border-slate-200 bg-white">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Tambah Vendor Baru</h4>
+                <form onsubmit="addNewVendor(event)" class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Nama Vendor *</label>
+                            <input type="text" id="new-vendor-name" required placeholder="Contoh: PT. MAJU JAYA" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Diskon (%) *</label>
+                            <input type="number" id="new-vendor-disc" required step="0.01" min="0" max="100" placeholder="0" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                    <div class="flex items-end gap-3">
+                        <div class="flex-grow">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Manufaktur / Keterangan (Opsional)</label>
+                            <input type="text" id="new-vendor-mfg" placeholder="Contoh: OSFIX / ZIMMER" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-2 rounded-xl transition-colors flex items-center gap-1.5 shadow-sm shrink-0">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            Tambah
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Daftar Vendor yang Tersimpan -->
+            <div class="p-6 overflow-y-auto flex-grow bg-slate-50/50">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Vendor Tersedia</h4>
+                <div id="vendor-list-container" class="space-y-2">
+                    <!-- Daftar vendor dirender lewat JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifikasi Toast (Pengganti alert()) -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2.5 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+        <span id="toast-message">Pesan notifikasi</span>
+    </div>
+
+    <script>
+        // Inisialisasi ikon Lucide
+        lucide.createIcons();
+
+        // Data awal vendor (mengambil dari memori HP jika sudah pernah ditambah/diubah)
+        const defaultVendors = [
+            { id: 'v1', name: 'SPI', disc: 0, mfg: '' },
+            { id: 'v2', name: 'SPI', disc: 10, mfg: 'OSFIX' },
+            { id: 'v3', name: 'BAS', disc: 3, mfg: 'HENGJIE & FUKANG' },
+            { id: 'v4', name: 'TRAFAS (MITRA FAJAR)', disc: 0, mfg: '-' },
+            { id: 'v5', name: 'AKARIM', disc: 20, mfg: 'ORTHOSON' },
+            { id: 'v6', name: 'AKARIM', disc: 10, mfg: 'ZIMMER' }
+        ];
+        let vendors = JSON.parse(localStorage.getItem('saved_margin_vendors')) || defaultVendors;
+
+        function saveVendorsToStorage() {
+            localStorage.setItem('saved_margin_vendors', JSON.stringify(vendors));
+        }
+
+        // State aplikasi
+        let currentMode = 'all_vendor'; // 'all_vendor' atau 'double_med'
+        let rawHna = 0;
+
+        // Format angka ke format Rupiah Indonesia
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            }).format(angka);
+        }
+
+        // Format input HNA saat diketik agar mudah dibaca (pemisah ribuan)
+        function formatAndCalculateHNA(input) {
+            let value = input.value.replace(/\D/g, '');
+            rawHna = value ? parseFloat(value) : 0;
+            
+            if (value) {
+                input.value = new Intl.NumberFormat('id-ID').format(rawHna);
+            } else {
+                input.value = '';
+            }
+            
+            calculate();
+        }
+
+        // Render dropdown pilihan vendor untuk mode All Vendor
+        function renderVendorDropdown() {
+            const select = document.getElementById('select-vendor');
+            select.innerHTML = '<option value="manual">-- Input Diskon Manual --</option>';
+            
+            vendors.forEach(v => {
+                const mfgText = v.mfg && v.mfg !== '-' ? ` - ${v.mfg}` : '';
+                const option = document.createElement('option');
+                option.value = v.id;
+                option.textContent = `${v.name}${mfgText} (Disc ${v.disc.toFixed(2)}%)`;
+                select.appendChild(option);
+            });
+        }
+
+        // Render daftar vendor di dalam modal kelola vendor
+        function renderVendorModalList() {
+            const container = document.getElementById('vendor-list-container');
+            container.innerHTML = '';
+
+            if (vendors.length === 0) {
+                container.innerHTML = '<p class="text-sm text-slate-500 text-center py-4">Belum ada vendor tersimpan.</p>';
+                return;
+            }
+
+            vendors.forEach(v => {
+                const mfgBadge = v.mfg && v.mfg !== '-' 
+                    ? `<span class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md font-medium">${v.mfg}</span>` 
+                    : '';
+
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 shadow-sm';
+                item.innerHTML = `
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-sm text-slate-800">${v.name}</span>
+                            ${mfgBadge}
+                        </div>
+                        <p class="text-xs text-blue-600 font-semibold mt-0.5">Diskon: ${v.disc.toFixed(2)}%</p>
+                    </div>
+                    <button onclick="deleteVendor('${v.id}')" title="Hapus Vendor" class="text-slate-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-colors">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        // Menambah vendor baru ke daftar acuan
+        function addNewVendor(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('new-vendor-name');
+            const discInput = document.getElementById('new-vendor-disc');
+            const mfgInput = document.getElementById('new-vendor-mfg');
+
+            const name = nameInput.value.trim().toUpperCase();
+            const disc = parseFloat(discInput.value) || 0;
+            const mfg = mfgInput.value.trim().toUpperCase();
+
+            if (!name) return;
+
+            const newId = 'v_' + Date.now();
+            vendors.push({ id: newId, name, disc, mfg });
+            saveVendorsToStorage();
+
+            nameInput.value = '';
+            discInput.value = '';
+            mfgInput.value = '';
+
+            renderVendorDropdown();
+            renderVendorModalList();
+
+            const select = document.getElementById('select-vendor');
+            select.value = newId;
+            handleVendorChange();
+
+            showToast(`Vendor "${name}" berhasil ditambahkan!`);
+        }
+
+        // Menghapus vendor dari daftar
+        function deleteVendor(id) {
+            vendors = vendors.filter(v => v.id !== id);
+            saveVendorsToStorage();
+            renderVendorDropdown();
+            renderVendorModalList();
+            
+            const select = document.getElementById('select-vendor');
+            if (!vendors.some(v => v.id === select.value)) {
+                select.value = 'manual';
+                handleVendorChange();
+            }
+            showToast('Vendor dihapus dari daftar');
+        }
+
+        // Menangani perubahan dropdown vendor di mode All Vendor
+        function handleVendorChange() {
+            const select = document.getElementById('select-vendor');
+            const discInput = document.getElementById('input-disc');
+            const label = document.getElementById('selected-vendor-label');
+
+            if (select.value === 'manual') {
+                label.innerHTML = `<i data-lucide="tag" class="w-3.5 h-3.5"></i><span>Vendor: Input Manual</span>`;
+            } else {
+                const selected = vendors.find(v => v.id === select.value);
+                if (selected) {
+                    discInput.value = selected.disc;
+                    const mfgInfo = selected.mfg && selected.mfg !== '-' ? ` (${selected.mfg})` : '';
+                    label.innerHTML = `<i data-lucide="tag" class="w-3.5 h-3.5"></i><span>Vendor: ${selected.name}${mfgInfo}</span>`;
+                }
+            }
+            lucide.createIcons();
+            calculate();
+        }
+
+        // Menangani perubahan kategori khusus Double Med
+        function handleDoubleMedCatChange() {
+            const select = document.getElementById('select-double-med-cat');
+            const discInput = document.getElementById('input-disc');
+            const label = document.getElementById('selected-vendor-label');
+
+            if (select.value === 'custom') {
+                label.innerHTML = `<i data-lucide="shield-plus" class="w-3.5 h-3.5"></i><span>Double Med (Diskon Manual)</span>`;
+            } else {
+                discInput.value = parseFloat(select.value);
+                const catName = select.value === '13.5' ? 'TRAUMA' : 'SPINE';
+                label.innerHTML = `<i data-lucide="shield-plus" class="w-3.5 h-3.5"></i><span>Double Med - ${catName}</span>`;
+            }
+            lucide.createIcons();
+            calculate();
+        }
+
+        // Berpindah antar mode kalkulator (All Vendor vs Double Med)
+        function switchMode(mode) {
+            currentMode = mode;
+
+            const tabAll = document.getElementById('tab-all-vendor');
+            const tabDm = document.getElementById('tab-double-med');
+            const secAll = document.getElementById('section-select-all-vendor');
+            const secDm = document.getElementById('section-select-double-med');
+            const formTitle = document.getElementById('form-title');
+            const resultHeader = document.getElementById('result-header');
+
+            if (mode === 'all_vendor') {
+                tabAll.className = 'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-200 bg-white text-blue-600 shadow-sm flex items-center justify-center gap-2';
+                tabDm.className = 'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900 flex items-center justify-center gap-2';
+                
+                secAll.classList.remove('hidden');
+                secDm.classList.add('hidden');
+
+                formTitle.innerHTML = `<span class="w-2 h-6 bg-blue-600 rounded-full"></span> Perhitungan All Vendor`;
+                resultHeader.className = 'bg-gradient-to-r from-blue-600 to-blue-700 p-5 sm:p-6 text-white';
+
+                handleVendorChange();
+            } else {
+                tabDm.className = 'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-200 bg-white text-indigo-600 shadow-sm flex items-center justify-center gap-2';
+                tabAll.className = 'flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all duration-200 text-slate-600 hover:text-slate-900 flex items-center justify-center gap-2';
+
+                secAll.classList.add('hidden');
+                secDm.classList.remove('hidden');
+
+                formTitle.innerHTML = `<span class="w-2 h-6 bg-indigo-600 rounded-full"></span> Perhitungan Khusus Double Med`;
+                resultHeader.className = 'bg-gradient-to-r from-indigo-600 to-indigo-700 p-5 sm:p-6 text-white';
+
+                handleDoubleMedCatChange();
+            }
+        }
+
+        // Fungsi Utama Perhitungan Margin Berjenjang
+        function calculate() {
+            const discPercent = parseFloat(document.getElementById('input-disc').value) || 0;
+            
+            const hnaPpn = rawHna * 1.11;
+            const discAmount = rawHna * (discPercent / 100);
+            const afterDisc = rawHna - discAmount;
+            const ppnAmount = afterDisc * 0.11;
+            const afterPpn = afterDisc + ppnAmount;
+
+            let rawFinalPrice = 0;
+
+            if (currentMode === 'all_vendor') {
+                rawFinalPrice = afterPpn * 1.20;
+            } else {
+                const afterGamaliel = afterPpn * 1.05;
+                rawFinalPrice = afterGamaliel * 1.20;
+            }
+
+            // Round up ke kelipatan ratusan terdekat (misal: 119.880 -> 119.900)
+            const roundedFinalPrice = Math.ceil(rawFinalPrice / 100) * 100;
+
+            document.getElementById('res-hna').textContent = formatRupiah(rawHna);
+            document.getElementById('res-hna-ppn').textContent = formatRupiah(hnaPpn);
+            document.getElementById('res-disc-label').textContent = `Disc (${discPercent}%)`;
+            document.getElementById('res-disc-amount').textContent = `- ${formatRupiah(discAmount)}`;
+            document.getElementById('res-jual-margin').textContent = formatRupiah(rawFinalPrice);
+            document.getElementById('final-price').textContent = formatRupiah(roundedFinalPrice);
+        }
+
+        // Reset input form
+        function resetForm() {
+            rawHna = 0;
+            document.getElementById('input-hna').value = '';
+            document.getElementById('input-disc').value = '';
+            
+            if (currentMode === 'all_vendor') {
+                document.getElementById('select-vendor').value = 'manual';
+                handleVendorChange();
+            } else {
+                document.getElementById('select-double-med-cat').value = '13.5';
+                handleDoubleMedCatChange();
+            }
+            showToast('Perhitungan telah direset');
+        }
+
+        // Salin hasil perhitungan ke clipboard
+        function copyResult() {
+            const finalPriceText = document.getElementById('final-price').textContent;
+            const hnaText = document.getElementById('res-hna').textContent;
+            const discLabel = document.getElementById('res-disc-label').textContent;
+            const modeTitle = currentMode === 'all_vendor' ? 'All Vendor' : 'Double Med';
+
+            const textToCopy = `Hasil Kalkulator (${modeTitle})\nHNA: ${hnaText}\n${discLabel}\nHarga Akhir: ${finalPriceText} (Include PPN)`;
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            showToast('Hasil perhitungan disalin ke clipboard!');
+        }
+
+        // Kontrol Modal
+        function openModalVendor() {
+            renderVendorModalList();
+            document.getElementById('modal-vendor').classList.remove('hidden');
+        }
+
+        function closeModalVendor() {
+            document.getElementById('modal-vendor').classList.add('hidden');
+        }
+
+        // Menampilkan notifikasi toast
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Inisialisasi saat halaman dimuat
+        window.onload = function() {
+            renderVendorDropdown();
+            switchMode('all_vendor');
+        };
+    </script>
+</body>
+</html>
